@@ -436,24 +436,24 @@ This keeps the pipeline honest: nothing reaches `main` without passing lint, typ
 
 ## 19. Delivery Checklist Against the Assessment Brief
 
-- [ ] All five CRUD endpoints for tasks, validated, correct HTTP status codes.
-- [ ] PostgreSQL via SQLAlchemy ORM, Alembic migrations.
-- [ ] FastAPI project structured as a modular monolith per Section 5.
-- [ ] Auth: register, verify email, login, forgot password, reset password.
-- [ ] Redis-backed login attempt lockout (15 minutes after threshold reached).
-- [ ] Structured logging with request correlation.
-- [ ] Automated tests for service-layer logic (mocked repositories) and at least a few integration tests against the real endpoints.
-- [ ] Docker support (Dockerfile + docker-compose for API, Postgres, Redis).
-- [ ] Swagger/OpenAPI docs (automatic via FastAPI).
-- [ ] Pagination, filtering, and search on the list-tasks endpoint.
-- [ ] Soft delete (`deleted_at`) on users, projects, and tasks, with partial indexes and repository-level filtering.
-- [ ] Gmail SMTP email delivery for verification and password reset, via App Password.
-- [ ] README.md and CONTRIBUTING.md shipped in the repo covering setup, env vars, run steps, endpoint list, testing, deployment, assumptions, limitations.
-- [ ] Pre-commit hooks (ruff, black, isort, mypy) configured.
-- [ ] Three-tier test suite (unit, integration, API) wired into CI with a coverage gate.
-- [ ] GitHub Actions CI/CD pipeline: lint, type-check, test, build, and deploy on merge to `main`.
-- [ ] Deployment live on Render/Railway (or documented deploy steps if not actually deployed within the deadline).
-- [ ] 3-5 minute video walkthrough: running app, core functionality, architecture explanation.
+- [x] All five CRUD endpoints for tasks, validated, correct HTTP status codes.
+- [x] PostgreSQL via SQLAlchemy ORM, Alembic migrations.
+- [x] FastAPI project structured as a modular monolith per Section 5.
+- [x] Auth: register, verify email, login, forgot password, reset password.
+- [x] Redis-backed login attempt lockout (15 minutes after threshold reached) -- verified end to end (5 failed attempts -> 423, correct 900s TTL).
+- [x] Structured logging with request correlation.
+- [x] Automated tests for service-layer logic (mocked repositories) and at least a few integration tests against the real endpoints -- exceeded: full three-tier suite, 92% coverage.
+- [x] Docker support (Dockerfile + docker-compose for API, Postgres, Redis).
+- [x] Swagger/OpenAPI docs (automatic via FastAPI, served at `/api-docs`).
+- [x] Pagination, filtering, and search on the list-tasks endpoint.
+- [x] Soft delete (`deleted_at`) on users, projects, and tasks, with partial indexes and repository-level filtering.
+- [x] Gmail SMTP email delivery for verification and password reset, via App Password -- implemented and gracefully degrades (logs, doesn't crash) when not configured with real credentials; not exercised against a real Gmail account.
+- [x] README.md and CONTRIBUTING.md shipped in the repo covering setup, env vars, run steps, endpoint list, testing, deployment, assumptions, limitations.
+- [x] Pre-commit hooks (ruff, black, isort, mypy) configured -- and actually verified working (`pre-commit run --all-files` passes clean), after catching and fixing a broken isolated mypy environment during the final pass.
+- [x] Three-tier test suite (unit, integration, API) wired into CI with a coverage gate.
+- [x] GitHub Actions CI/CD pipeline: lint, type-check, test, build, and publish an image to GHCR on merge to `main` (and `dev`, for staging). **Not done:** the last step, actually triggering a deploy on a hosting platform -- see below.
+- [ ] Deployment live (or documented deploy steps if not actually deployed within the deadline -- the latter applies here). Original plan was Render/Railway; changed mid-build to a platform called Softkloud, for which usable deployment docs weren't available at the time of writing. Paused per explicit instruction rather than guessed at. README's "Branching and deployment model" section documents current status.
+- [ ] 3-5 minute video walkthrough: running app, core functionality, architecture explanation. Outside what an agent can produce -- this is on the candidate to record.
 
 ---
 
