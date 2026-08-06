@@ -361,7 +361,7 @@ The project ships its own `README.md` and `CONTRIBUTING.md` (not just this desig
 - Quick start: `docker compose up` for API + Postgres + Redis together, and a bare-metal alternative (virtualenv, `pip install -r requirements.txt`, `alembic upgrade head`, `uvicorn app.main:app --reload`).
 - Full environment variable table (Section 14).
 - How to run migrations, how to seed sample data.
-- Full endpoint list (or a link to `/docs` for the live Swagger UI).
+- Full endpoint list (or a link to `/api-docs` for the live Swagger UI).
 - How to run tests (Section 16) and how to read coverage output.
 - Assumptions and known limitations (Section 11).
 - Deployment notes (Section 18), or a link to it.
