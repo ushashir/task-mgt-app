@@ -61,6 +61,7 @@ def create_app() -> FastAPI:
         title=PROJECT_NAME,
         version="0.1.0",
         lifespan=lifespan,
+        docs_url="/api-docs",
     )
 
     app.add_middleware(RequestIdMiddleware)

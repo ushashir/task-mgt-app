@@ -18,7 +18,11 @@ line-length = 100
 target-version = "py312"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "SIM"]
+# "I" (import sorting) deliberately excluded: isort is the dedicated tool
+# for that (Section 15 CONTRIBUTING plan), and its rules for splitting an
+# aliased import ("from x import Y as Z") don't agree with ruff's -- running
+# both fights over the same lines. isort has the final say; ruff only lints.
+select = ["E", "F", "B", "UP", "SIM"]
 ignore = ["B008"]  # FastAPI's Depends(...) as a default argument is intentional
 
 [tool.mypy]
