@@ -253,11 +253,13 @@ Redis is a natural fit because every artifact above (verification tokens, reset 
 
 ### 9.1 Branching Model
 
-- `main` — always deployable, protected, requires PR review before merge.
-- `develop` — optional integration branch if the project needs a staging step before `main`; for a project this size, trunk-based development directly against `main` via short-lived feature branches is likely sufficient.
-- `feature/<short-description>` — one branch per unit of work (e.g., `feature/task-crud`, `feature/auth-login`).
-- `fix/<short-description>` — bug fixes.
-- `chore/<short-description>` — tooling, CI, dependency bumps.
+- `main` — production. Protected on GitHub: PRs required, direct pushes blocked (including for admins), force-push and branch deletion disabled. Deploys to production (Section 18).
+- `dev` — staging/integration branch. Every feature branch merges here first; deploys to staging. Not force-pushed or deleted either, but doesn't carry the same hard protection as `main` since it's meant to move fast.
+- `feature/<short-description>` — one branch per unit of work (e.g., `feature/task-crud`, `feature/auth-login`), branched off `dev`, PR'd back into `dev`.
+- `fix/<short-description>` — bug fixes, same flow as `feature/*`.
+- `chore/<short-description>` — tooling, CI, dependency bumps, same flow as `feature/*`.
+
+**Promotion flow:** `feature/*` → PR → `dev` (staging). Once `dev` is in a state worth shipping, a separate PR promotes `dev` → `main` (production). This is a deliberate two-stage promotion rather than trunk-based development directly against `main`, so staging and production can be deployed independently from their respective branches.
 
 ### 9.2 Commit Convention
 
@@ -271,12 +273,13 @@ Conventional Commits style, so history is scannable and could drive automated ch
 
 ### 9.3 Pull Request Workflow
 
-1. Branch off `main`, keep the branch focused on one concern.
-2. Open a PR early (draft if not ready) with a clear description of what and why.
+1. Branch off `dev`, keep the branch focused on one concern.
+2. Push the branch, open a PR targeting `dev` with a clear description of what and why.
 3. CI runs lint (ruff/flake8), type checks (mypy, optional), and the test suite on every push.
 4. At least one review pass before merge (self-review is acceptable for a solo assessment, but the checklist still applies).
-5. Squash-merge into `main` with a clean, descriptive commit message.
-6. Tag releases using semantic versioning once the API is stable enough to version (`v0.1.0`, etc.).
+5. Squash-merge into `dev`.
+6. Once `dev` holds a coherent, working slice, open a second PR promoting `dev` → `main`; merging this is what ships to production.
+7. Tag releases using semantic versioning once the API is stable enough to version (`v0.1.0`, etc.).
 
 ### 9.4 Repository Hygiene
 
