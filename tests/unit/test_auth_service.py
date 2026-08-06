@@ -49,13 +49,19 @@ async def test_verify_email_with_unknown_token_is_rejected():
         await service.verify_email("does-not-exist")
 
 
-async def test_verify_email_marks_user_verified_and_is_single_use():
+async def test_register_auto_verifies_email():
     service = make_service()
-    user, token = await service.register("new@example.com", "Str0ng!Pass1", "New User")
-    assert user.is_email_verified is False
+
+    user, _ = await service.register("new@example.com", "Str0ng!Pass1", "New User")
+
+    assert user.is_email_verified is True
+
+
+async def test_verify_email_token_is_single_use():
+    service = make_service()
+    _, token = await service.register("new@example.com", "Str0ng!Pass1", "New User")
 
     await service.verify_email(token)
-    assert user.is_email_verified is True
 
     with pytest.raises(InvalidTokenError):
         await service.verify_email(token)  # replay

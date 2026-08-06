@@ -79,6 +79,7 @@ class AuthService:
             email=normalized_email,
             password_hash=hash_password(password),
             full_name=full_name,
+            is_email_verified=True,
         )
         user = await self._users.add(user)
 

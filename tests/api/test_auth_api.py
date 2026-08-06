@@ -22,7 +22,7 @@ async def test_register_returns_201_with_user_body(client: AsyncClient):
     assert response.status_code == 201
     body = response.json()
     assert body["email"] == "new@example.com"
-    assert body["is_email_verified"] is False
+    assert body["is_email_verified"] is True
     assert "password" not in body
     assert "password_hash" not in body
 
@@ -56,18 +56,18 @@ async def test_verify_email_token_is_single_use(client: AsyncClient, redis_clien
     assert replay.status_code == 400
 
 
-async def test_login_before_verification_returns_403(client: AsyncClient):
+async def test_login_succeeds_without_explicit_verification(client: AsyncClient):
     await client.post(
         "/api/v1/auth/register",
-        json={"email": "unverified@example.com", "password": DEFAULT_PASSWORD, "full_name": "U"},
+        json={"email": "onboarded@example.com", "password": DEFAULT_PASSWORD, "full_name": "U"},
     )
 
     response = await client.post(
         "/api/v1/auth/login",
-        json={"email": "unverified@example.com", "password": DEFAULT_PASSWORD},
+        json={"email": "onboarded@example.com", "password": DEFAULT_PASSWORD},
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 200
 
 
 async def test_login_wrong_password_returns_401(client: AsyncClient, redis_client: Redis):
