@@ -68,7 +68,7 @@ Reasoning: task `status` and `priority` are natural enums, and PostgreSQL enforc
 
 ### 4.2 Non-Functional Requirements
 
-- **Security:** passwords hashed with a slow hash (Argon2 or bcrypt), JWT access/refresh tokens, short-lived access tokens, brute-force protection on login.
+- **Security:** passwords hashed with a slow hash (Argon2 or bcrypt), JWT access/refresh tokens, short-lived access tokens, brute-force protection on login. Password policy enforced at the schema layer: minimum 8 characters, at least one uppercase letter, one lowercase letter, one digit, and one special character.
 - **Reliability:** consistent error format across all endpoints, no unhandled exceptions leaking stack traces.
 - **Performance:** sub-200ms typical response time for CRUD endpoints under light load; Redis used to avoid repeated expensive lookups (e.g., login attempt counters).
 - **Observability:** structured logging with request correlation IDs, log levels separating operational noise from actionable errors.

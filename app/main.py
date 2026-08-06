@@ -11,6 +11,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
+# Every ORM model must be imported somewhere before the first query runs, so
+# that string-based relationship() references (e.g. User.projects ->
+# "Project") can resolve against SQLAlchemy's declarative class registry.
+from app.auth import models as _auth_models  # noqa: F401
 from app.common.exceptions import (
     AccountLockedError,
     ConflictError,
@@ -26,6 +30,8 @@ from app.core.health import router as health_router
 from app.core.logging import configure_logging, get_logger, request_id_ctx
 from app.core.middleware import RequestIdMiddleware
 from app.core.redis import close_redis
+from app.projects import models as _projects_models  # noqa: F401
+from app.tasks import models as _tasks_models  # noqa: F401
 
 logger = get_logger(__name__)
 
