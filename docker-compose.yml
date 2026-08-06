@@ -1,0 +1,59 @@
+name: task-management-api
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      # These two deliberately override whatever is in .env: inside the
+      # compose network the API must reach Postgres/Redis by service name,
+      # not by whatever host/port a bare-metal .env points at (localhost
+      # inside this container is the container itself, not the host).
+      DATABASE_URL: postgresql+asyncpg://taskuser:taskpass@db:5432/taskdb
+      REDIS_URL: redis://redis:6379/0
+    # Local-dev-only convenience: run migrations before serving. Section 18
+    # is explicit that in a real deploy this is a separate release step,
+    # not baked into the image's own CMD -- see Dockerfile.
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: taskpass
+      POSTGRES_DB: taskdb
+    ports:
+      # Host-side 5434, not 5432: avoids clashing with a Postgres instance
+      # you might already have running locally. The api service always
+      # talks to this over the compose network as db:5432 regardless.
+      - "5434:5432"
+    volumes:
+      - task_mgn_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskuser -d taskdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6381:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  task_mgn_pgdata:
