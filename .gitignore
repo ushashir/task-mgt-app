@@ -20,4 +20,7 @@ build/
 .DS_Store
 .idea/
 .vscode/
+
+# Local-only Claude Code context; never shipped with the repo.
+.claude/
 alembic/versions/__pycache__/
