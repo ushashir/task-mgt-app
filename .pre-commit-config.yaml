@@ -15,9 +15,18 @@ repos:
     hooks:
       - id: isort
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.14.0
+  - repo: local
     hooks:
       - id: mypy
-        additional_dependencies: [pydantic==2.10.4]
-        exclude: ^(alembic/|tests/)
+        name: mypy
+        # language: system, not the mirrors-mypy repo's isolated venv --
+        # that venv only sees whatever's listed in additional_dependencies,
+        # which drifted from requirements.txt and produced dozens of false
+        # "Library stubs not installed" / "has type Any" errors on files
+        # that pass cleanly under the project's actual mypy config. Running
+        # from the activated project venv (same as CI does) is the only
+        # way this hook agrees with `mypy app/` run directly.
+        entry: mypy app/
+        language: system
+        pass_filenames: false
+        types: [python]

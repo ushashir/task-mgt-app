@@ -62,7 +62,9 @@ pre-commit install        # one-time, per clone
 pre-commit run --all-files   # run manually against everything
 ```
 
-Note: `ruff`'s own import-sorting rule is deliberately disabled in `pyproject.toml` -- `isort` is the single source of truth for import order. Running both against the same rule caused them to disagree and fight over the same lines.
+Notes:
+- `ruff`'s own import-sorting rule is deliberately disabled in `pyproject.toml` -- `isort` is the single source of truth for import order. Running both against the same rule caused them to disagree and fight over the same lines.
+- The `mypy` hook runs against your **activated virtualenv** (`language: system`), not an isolated pre-commit environment -- it needs `requirements-dev.txt` already installed (step above) before `pre-commit run` will give correct results. This is intentional: an isolated mypy env only sees whatever's manually listed as `additional_dependencies`, which drifts from `requirements.txt` and produces false positives on every third-party-typed import (FastAPI, SQLAlchemy, Redis, etc.) the moment it falls out of sync.
 
 ## What a PR needs
 
